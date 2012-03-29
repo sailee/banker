@@ -18,15 +18,15 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Parser p = new Parser();
-
+		Parser p = new Parser();		
+		
 		//process input from input file
 		if(args.length > 0)
 		{
 			try 
 			{				
 				State currentState= p.parseInput(args[0]) ;
-				State backup = new State(currentState);
+				State backup = p.parseInput(args[0]) ;
 
 				if(currentState !=null)
 				{					

@@ -1,10 +1,12 @@
 package banker.types;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Task {		
-	int taskID, endTime, waitTime;
+	int taskID;
+	Double endTime, waitTime;
 	HashMap<Integer, Integer> initialClaims;
 	HashMap<Integer, Integer> resourcesHeld;
 	LinkedList<Activity> activities;	
@@ -13,16 +15,20 @@ public class Task {
 	public Task(int ID)
 	{
 		isAborted = false;
-		endTime = -1;
-		waitTime = 0;
+		endTime = -1D;
+		waitTime = 0D;
 		initialClaims = new HashMap<Integer, Integer>();
 		resourcesHeld = new HashMap<Integer, Integer>();
 		activities = new LinkedList<Activity>();
 		taskID = ID;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Task(Task task) {
 		this(task.taskID);
+		
+		initialClaims = (HashMap<Integer, Integer>) task.initialClaims.clone();
+		resourcesHeld = (HashMap<Integer, Integer>) task.resourcesHeld.clone();
 		
 		for(Activity a : task.activities)
 		{
@@ -62,7 +68,7 @@ public class Task {
 	public HashMap<Integer, Integer> Terminate(int clock)
 	{
 		//set end time
-		endTime = clock;
+		endTime = (double)clock;
 
 		//free resources
 		return resourcesHeld;
@@ -78,8 +84,9 @@ public class Task {
 	{
 		if(!isAborted)
 		{
+			DecimalFormat df = new DecimalFormat("#");
 			Double result = (double) (waitTime*100/(endTime));
-			return "Task " + taskID + "\t" + endTime + "\t" + waitTime + "\t" + result + "%";
+			return "Task " + taskID + "\t" + df.format(endTime) + "\t" + df.format(waitTime) + "\t" + df.format(result) + "%";
 		}
 		return "Task " + taskID + "\t" + "aborted";
 	}	
@@ -109,6 +116,31 @@ public class Task {
 		activities.clear();
 		isAborted = true;
 		addTerminate();
-		activities.getFirst().perform(clock, resourceList, delta);
+		activities.getFirst().perform(clock, resourceList, delta,"fifo");
+	}
+
+	public Integer resourcesRequired(Integer resourceType) {
+		int claim = 0, held = 0;
+		if(initialClaims.containsKey(resourceType))
+			claim = initialClaims.get(resourceType);
+		
+		if(resourcesHeld.containsKey(resourceType))
+			held = resourcesHeld.get(resourceType);
+		
+		return claim - held;
+	}
+	
+	public Double getEndTime()
+	{
+		if(isAborted)
+			return 0D; 
+		return endTime;
+	}
+	
+	public Double getWaitTime()
+	{
+		if(isAborted)
+			return 0D;		
+		return waitTime;
 	}
 }

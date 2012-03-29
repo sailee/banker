@@ -39,24 +39,25 @@ public class Activity {
 		 resourceCount = count;
 	}
 	
-	public boolean perform(int clock, HashMap<Integer, Integer> resourceList, HashMap<Integer, Integer> delta)
+	public ExecutionResult perform(int clock, HashMap<Integer, Integer> resourceList, HashMap<Integer, Integer> delta, String algo)
 	{		
 		if(type == ActivityType.terminate)
 		{
-			task.endTime = clock - 1;
+			task.endTime =(double)(clock - 1);
 		}
 		
-		//if the activity was successful, remove it from the list, in order to proceed to the next, else hold		
-		if(type.executeFIFO(this, resourceList, delta))
-		{				
-			task.activities.remove();
-			return true;
+		ExecutionResult result;
+		//if the activity was successful, remove it from the list, in order to proceed to the next, else hold
+		if(algo.equalsIgnoreCase("fifo"))
+		{
+			result = type.executeFIFO(this, resourceList, delta);
 		}
 		else
 		{
-			task.holdTask();
-			return false;
-		}		
+			result = type.executeBankers(this, resourceList, delta);
+		}
+		
+		return result;
 	}
 	
 	
@@ -67,6 +68,10 @@ public class Activity {
 
 	public Task getTask() {
 		return task;
+	}
+
+	public ActivityType getType() {
+		return type;
 	}
 	
 }
