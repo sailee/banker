@@ -1,0 +1,157 @@
+{1=4, 2=4, 3=4}
+
+During 0-1
+Task 1 completed its initiate request.
+Task 2 completed its initiate request.
+Task 3 completed its initiate request.
+
+During 1-2
+Task 1 completed its initiate request.
+Task 2 completed its initiate request.
+Task 3 completed its initiate request.
+
+During 2-3
+Task 1 completed its initiate request.
+Task 2 completed its initiate request.
+Task 3 completed its initiate request.
+
+During 3-4
+Task 1 requested: 1 of type: 1
+Task 1 completes its request (i.e., the request is granted).
+	3 items remaining of resource 1
+Task 2 requested: 4 of type: 1
+Could not allocate resources. Need to wait.
+	3 items remaining of resource 1
+Task 3 requested: 4 of type: 1
+Could not allocate resources. Need to wait.
+	3 items remaining of resource 1
+
+During 4-5
+Task 2 requested: 4 of type: 1
+Could not allocate resources. Need to wait.
+	3 items remaining of resource 1
+Task 3 requested: 4 of type: 1
+Could not allocate resources. Need to wait.
+	3 items remaining of resource 1
+Task 1 released 1 units of resource type 1
+	4 items remaining of resource 1
+
+During 5-6
+Task 2 requested: 4 of type: 1
+Task 2 completes its request (i.e., the request is granted).
+	0 items remaining of resource 1
+Task 3 requested: 4 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 1 requested: 3 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+
+During 6-7
+Task 3 requested: 4 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 1 requested: 3 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 2 requested: 1 of type: 2
+Task 2 completes its request (i.e., the request is granted).
+	3 items remaining of resource 2
+
+During 7-8
+Task 3 requested: 4 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 1 requested: 3 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 2 requested: 1 of type: 3
+Task 2 completes its request (i.e., the request is granted).
+	3 items remaining of resource 3
+
+During 8-9
+Task 3 requested: 4 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 1 requested: 3 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 2 released 4 units of resource type 1
+	4 items remaining of resource 1
+
+During 9-10
+Task 3 requested: 4 of type: 1
+Task 3 completes its request (i.e., the request is granted).
+	0 items remaining of resource 1
+Task 1 requested: 3 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 2 released 1 units of resource type 2
+	4 items remaining of resource 2
+
+During 10-11
+Task 1 requested: 3 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 2 released 1 units of resource type 3
+	4 items remaining of resource 3
+Task 3 requested: 1 of type: 3
+Task 3 completes its request (i.e., the request is granted).
+	3 items remaining of resource 3
+
+During 11-12
+Task 1 requested: 3 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 2 terminated.
+Task 2 released 0 units of resource type 1
+	0 items remaining of resource 1
+Task 2 released 0 units of resource type 2
+	4 items remaining of resource 2
+Task 2 released 0 units of resource type 3
+	3 items remaining of resource 3
+Task 3 released 1 units of resource type 3
+	4 items remaining of resource 3
+
+During 12-13
+Task 1 requested: 3 of type: 1
+Could not allocate resources. Need to wait.
+	0 items remaining of resource 1
+Task 3 released 4 units of resource type 1
+	4 items remaining of resource 1
+
+During 13-14
+Task 1 requested: 3 of type: 1
+Task 1 completes its request (i.e., the request is granted).
+	1 items remaining of resource 1
+Task 3 terminated.
+Task 3 released 0 units of resource type 1
+	1 items remaining of resource 1
+Task 3 released 0 units of resource type 3
+	4 items remaining of resource 3
+
+During 14-15
+Task 1 requested: 1 of type: 2
+Task 1 completes its request (i.e., the request is granted).
+	3 items remaining of resource 2
+
+During 15-16
+Task 1 released 1 units of resource type 2
+	4 items remaining of resource 2
+
+During 16-17
+Task 1 released 3 units of resource type 1
+	4 items remaining of resource 1
+
+During 17-18
+Task 1 terminated.
+Task 1 released 0 units of resource type 1
+	4 items remaining of resource 1
+Task 1 released 0 units of resource type 2
+	4 items remaining of resource 2
+
+		FIFO
+Task#	End	Wait	Wait %
+Task 1	17	8	47.0%
+Task 2	11	2	18.0%
+Task 3	13	6	46.0%

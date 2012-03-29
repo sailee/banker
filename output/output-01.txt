@@ -1,0 +1,64 @@
+{1=4}
+
+During 0-1
+Task 1 completed its initiate request.
+Task 2 completed its initiate request.
+
+During 1-2
+Task 1 requested: 1 of type: 1
+Task 1 completes its request (i.e., the request is granted).
+	3 items remaining of resource 1
+Task 2 requested: 1 of type: 1
+Task 2 completes its request (i.e., the request is granted).
+	2 items remaining of resource 1
+
+During 2-3
+Task 1 released 1 units of resource type 1
+	3 items remaining of resource 1
+Task 2 released 1 units of resource type 1
+	4 items remaining of resource 1
+
+During 3-4
+Task 1 terminated.
+Task 1 released 0 units of resource type 1
+	4 items remaining of resource 1
+Task 2 terminated.
+Task 2 released 0 units of resource type 1
+	4 items remaining of resource 1
+
+		FIFO
+Task#	End	Wait	Wait %
+Task 1	3	0	0.0%
+Task 2	3	0	0.0%
+{1=4}
+
+During 0-1
+Task 1 completed its initiate request.
+Task 2 completed its initiate request.
+
+During 1-2
+Task 1 requested: 1 of type: 1
+Task 1 completes its request (i.e., the request is granted).
+	3 items remaining of resource 1
+Task 2 requested: 1 of type: 1
+Task 2 completes its request (i.e., the request is granted).
+	2 items remaining of resource 1
+
+During 2-3
+Task 1 released 1 units of resource type 1
+	3 items remaining of resource 1
+Task 2 released 1 units of resource type 1
+	4 items remaining of resource 1
+
+During 3-4
+Task 1 terminated.
+Task 1 released 0 units of resource type 1
+	4 items remaining of resource 1
+Task 2 terminated.
+Task 2 released 0 units of resource type 1
+	4 items remaining of resource 1
+
+		FIFO
+Task#	End	Wait	Wait %
+Task 1	3	0	0.0%
+Task 2	3	0	0.0%

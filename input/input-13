@@ -1,0 +1,15 @@
+2 1 4
+initiate  1 1 4
+compute   1 5
+request   1 1 1
+compute   1 5
+release   1 1 1
+compute   1 5
+terminate 1
+initiate  2 1 4
+compute   2 5
+request   2 1 1
+compute   2 5
+release   2 1 1
+compute   2 5
+terminate 2
