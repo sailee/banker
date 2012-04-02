@@ -1,14 +1,14 @@
 
 		FIFO
-Task#	End	Wait	Wait %
+
 Task 1	aborted
 Task 2	5	1	20%
 Task 3	aborted
 Task 4	9	5	56%
 TOTAL 	14	6	43%
 
-		BANKERS
-Task#	End	Wait	Wait %
+		Bankers
+
 Task 1	9	4	44%
 Task 2	4	0	0%
 Task 3	aborted

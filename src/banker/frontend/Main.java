@@ -25,13 +25,12 @@ public class Main {
 		{
 			try 
 			{				
-				State currentState= p.parseInput(args[0]) ;
-				State backup = p.parseInput(args[0]) ;
+				State currentState= p.parseInput(args[0]) ;				
 
 				if(currentState !=null)
 				{					
 					FIFO.perform(currentState);
-					Bankers.perform(backup);
+					Bankers.perform(p.parseInput(args[0]));
 				}
 				else
 				{

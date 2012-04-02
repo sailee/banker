@@ -1,8 +1,5 @@
 package banker.logic;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,45 +10,22 @@ import banker.types.ExecutionResult;
 import banker.types.State;
 import banker.types.Task;
 
-public class Bankers {
-
-	static int clock = 1;
-	static LinkedList<Activity> activityList;
-	static LinkedList<Task> taskList;	
-	static HashMap<Integer,Integer> resourceList;
-	static HashMap<Integer, Integer> delta;
-
-	@SuppressWarnings("unchecked")
+public class Bankers extends FIFO {	
+	
+	/**
+	 * This is the entry point for performing the FIFO resource allocation on the given input
+	 * @param currentState the state of the system, as indicated in the input
+	 */
 	public static void perform(State currentState)
-	{
-		int initialActivityCount = 0;
-		activityList = currentState.getActivityList();
-		taskList = currentState.getTaskList();
-		resourceList = currentState.getResourceList();
-		
-		PrintStream out = System.out;
-		PrintStream temp;
+	{	
 
-		try {
-			temp = new PrintStream("file1.txt");
-		} catch (FileNotFoundException e) {
-			temp = System.err;
-		}
-		System.setOut(temp);
-		
-		while(true)
+		init(currentState);
+
+		while(countofPendingActivities > 0)
 		{
-			initialActivityCount = 0;
-
-			//exit when no task has any activity left
-			if(activityList.size() == 0)
-				break;
-
-			System.out.println("\nDuring " + (clock-1) + "-" + clock);
-
-			delta = (HashMap<Integer, Integer>) resourceList.clone();			
-
-			initialActivityCount = performActivities(initialActivityCount);
+			System.out.println("\nDuring " + (clock-1) + "-" + clock);			
+			
+			performActivities();			
 
 			//replenish activityList			
 			replenishActivityList();
@@ -59,64 +33,24 @@ public class Bankers {
 			clock++;
 
 			currentState.setResourceList(delta);	
-			resourceList = delta;
+			resourceList = (HashMap<Integer, Integer>) delta.clone();
+
+			countofPendingActivities = activityList.size();
 		}
 
-		System.setOut(out);
-		
-		System.out.println("\n\t\tBANKERS\r\nTask#\tEnd\tWait\tWait %");
-
-		double totalEnd = 0D, totalWait = 0D;
-
-		for(Task t:taskList)
-		{
-			totalEnd += t.getEndTime();
-			totalWait+= t.getWaitTime();
-			System.out.println(t);
-		}
-		DecimalFormat df = new DecimalFormat("#");
-		System.out.println("TOTAL \t" + df.format(totalEnd) + "\t" + df.format(totalWait) + "\t" + df.format(totalWait*100/totalEnd) + "%");
-
-	}	
-
-	private static void replenishActivityList() {
-		for(Task t: taskList)
-		{
-			boolean present = false;
-
-			if(t.getPendingActivityCount() != 0)
-			{
-				for(Activity a:activityList)
-				{
-					if(a.getTask() == t)
-					{
-						present = true;
-						break;
-					}
-				}
-
-				if(!present)
-					activityList.add(t.getNextActivity());
-			}
-		}
+		displayFinalState("Bankers");
 	}
 
-	private static int performActivities(int countOfTasksHeld) 
-	{
+	
+	static void performActivities() 
+	{		
 		Iterator<Activity> itr = activityList.iterator();
 		boolean isRequestValid = false;
 
 		while(itr.hasNext())
 		{
 			Activity currentActivity = itr.next();
-			if(currentActivity.getType() == ActivityType.request)
-			{
-				isRequestValid = validateRequest(currentActivity);
-			}
-			else
-			{
-				isRequestValid = true;
-			}
+			isRequestValid = validateActivity(currentActivity);
 
 			if(isRequestValid)
 			{
@@ -125,24 +59,29 @@ public class Bankers {
 
 				if(result == ExecutionResult.success || result == ExecutionResult.aborted)
 				{
-					itr.remove();
-					activityList.remove(currentActivity);					
-				}
-				else if(result == ExecutionResult.hold)
-				{
-					countOfTasksHeld ++;
-				}
+					itr.remove();										
+				}				
 			}
 			else
-			{
-				countOfTasksHeld ++;
+			{				
 				currentActivity.getTask().holdTask();
 			}
-		}
-		return countOfTasksHeld;
+		}		
 	}
 
-	@SuppressWarnings("unchecked")
+	private static boolean validateActivity(Activity currentActivity) {
+		boolean isRequestValid;
+		if(currentActivity.getType() == ActivityType.request)
+		{
+			isRequestValid = validateRequest(currentActivity);
+		}
+		else
+		{
+			isRequestValid = true;
+		}
+		return isRequestValid;
+	}
+
 	private static boolean validateRequest(Activity currentActivity) {	
 
 		LinkedList<Task> newTaskList = new LinkedList<Task>();	
@@ -154,86 +93,84 @@ public class Bankers {
 		for(Task t : taskList)
 		{	
 			newTaskList.add(new Task(t));
-
+			
 			if(currentActivity.getTask() == t)
-			{
 				currentTask = newTaskList.getLast();
-			}
 		}
-
-		PrintStream out = System.out;
-		PrintStream temp;
-//		temp = System.err;
-
-		try {
-			temp = new PrintStream("file1.txt");
-		} catch (FileNotFoundException e) {
-			temp = System.err;
-			//e.printStackTrace();
-		}		
-
-		System.setOut(temp);
-		ExecutionResult result = currentTask.getNextActivity().perform(clock, newResourceList, newDelta, "bankers");
 		
+		ExecutionResult result = currentTask.getNextActivity().perform(clock, newResourceList, newDelta, "bankers");
+
 		//verify if granting the request leads to a safe state. result = success indicates that the request can be granted 
 		if(result == ExecutionResult.success)
 		{
-			int count = 0;
-
-			for(int i=0;i<newTaskList.size();i++)		
-			{			
-				Boolean matchFound = true;
-				count = 0;
-				for(Task task: newTaskList)
-				{		
-					matchFound = true;
-					if(task.getPendingActivityCount() > 0 && task.getNextActivity().getType() != ActivityType.terminate)
-					{									
-						for(Integer resourceType : newDelta.keySet())
-						{
-							Integer quantity = newDelta.get(resourceType);
-
-							int needs = task.resourcesRequired(resourceType);
-
-							System.out.println("Task " + task.getID() + " requires " + needs + " of resource " + resourceType + ". Current Availability = " + quantity);
-							if(needs > quantity)
-							{
-								matchFound = false;
-								break;
-							}
-						}
-
-						if(matchFound)
-						{
-							task.abort(-1, newResourceList, newDelta);
-							count++;
-						}
-					}
-					else
-					{
-						count++;
-					}
-				}
-
-				if(!matchFound)
-				{
-					System.setOut(out);
-					System.out.println("Cannot grant request for Task " + currentActivity.getTask().getID());
-					return false;				
-				}
-
-				if(count == taskList.size())
-				{
-					System.setOut(out);
-					return true;
-				}				
-			}
+			return checkForSafeState(currentActivity, newTaskList, newResourceList, newDelta);
 		}
+		return true;		
 		
-		// The request cannot be granted, hence the task should either be held, or aborted based on result
-		System.setOut(out);
-		System.out.println("Execution result for Task " + currentActivity.getTask().getID() + " = " +  result.name());
-		return true;
-	}	
+	}
 
+	private static boolean checkForSafeState(Activity currentActivity,
+			LinkedList<Task> newTaskList,
+			HashMap<Integer, Integer> newResourceList,
+			HashMap<Integer, Integer> newDelta) {
+		int terminatedProcessCount = 0;	//keeps a track of count of terminated processes
+		
+		System.out.println(".......Inside validate....");
+
+		for(int i=0;i<newTaskList.size();i++)		
+		{			
+			Boolean matchFound = true;
+			terminatedProcessCount = 0;
+			
+			for(Task task: newTaskList)
+			{		
+				matchFound = true;
+				if(task.getPendingActivityCount() > 0 && task.getNextActivity().getType() != ActivityType.terminate)
+				{									
+					//finding the task whose additional resource needs can be currently satisfied
+					for(Integer resourceType : newDelta.keySet())
+					{
+						Integer quantity = newDelta.get(resourceType);
+
+						int needs = task.resourcesRequired(resourceType);
+
+						System.out.println("Task " + task.getID() + " requires " + needs + " of resource " + resourceType + ". Current Availability = " + quantity);
+						
+						if(needs > quantity)
+						{
+							matchFound = false;
+							break;
+						}
+					}
+
+					//if such a task is found, pretend that it terminated (equivalent to abort)
+					if(matchFound)
+					{
+						task.abort(-1, newResourceList, newDelta);
+						terminatedProcessCount++;
+					}
+				}
+				else
+				{
+					terminatedProcessCount++;
+				}
+			}
+			
+			//if not a single task could be completed after granting this request, system will be led to unsafe state, hence reject this request. 
+			if(!matchFound)
+			{
+				System.out.println(".......validate returned false....");
+				return false;				
+			}
+
+			//if all processes could be completed after granting this request, the system will be led to safe state, hence grant this request.
+			if(terminatedProcessCount == taskList.size())
+			{				
+				System.out.println(".......validate returned true....");
+				return true;
+			}		
+		}
+		System.out.println(".......validate returned ??....");
+		return false;
+	}
 }

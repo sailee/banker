@@ -1,12 +1,12 @@
 
 		FIFO
-Task#	End	Wait	Wait %
+
 Task 1	18	0	0%
 Task 2	18	0	0%
 TOTAL 	36	0	0%
 
-		BANKERS
-Task#	End	Wait	Wait %
+		Bankers
+
 Task 1	18	0	0%
 Task 2	25	7	28%
 TOTAL 	43	7	16%
